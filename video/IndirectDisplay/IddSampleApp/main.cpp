@@ -24,8 +24,7 @@ CreationCallback(
 
 int __cdecl main(int argc, wchar_t *argv[])
 {
-    UNREFERENCED_PARAMETER(argc);
-    UNREFERENCED_PARAMETER(argv);
+    bool headless = argc > 1 && _wcsicmp(argv[1], L"--headless") == 0;
 
     HANDLE hEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
     HSWDEVICE hSwDevice;
@@ -73,14 +72,15 @@ int __cdecl main(int argc, wchar_t *argv[])
     printf("Device created\n\n");
     
     // Now wait for user to indicate the device should be stopped
-    printf("Press 'x' to exit and destory the software device\n");
+    printf(headless
+        ? "Headless mode active; send 'x' on standard input to stop the software device\n"
+        : "Press 'x' to exit and destroy the software device\n");
     bool bExit = false;
     do
     {
-        // Wait for key press
-        int key = _getch();
+        int key = headless ? getchar() : _getch();
 
-        if (key == 'x' || key == 'X')
+        if (key == EOF || key == 'x' || key == 'X')
         {
             bExit = true;
         }

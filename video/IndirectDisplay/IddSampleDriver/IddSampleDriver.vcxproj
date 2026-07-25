@@ -30,7 +30,7 @@
       <SpecifyDriverVerDirectiveDate>true</SpecifyDriverVerDirectiveDate>
       <DateStamp>07/22/2026</DateStamp>
       <SpecifyDriverVerDirectiveVersion>true</SpecifyDriverVerDirectiveVersion>
-      <TimeStamp>24.0.0.1</TimeStamp>
+      <TimeStamp>24.0.0.2</TimeStamp>
     </Inf>
   </ItemGroup>
   <PropertyGroup Label="Globals">
