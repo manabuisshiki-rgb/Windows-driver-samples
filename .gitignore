@@ -27,6 +27,10 @@ _logs
 # Visual Studio Code directory
 .vscode/
 
+# Local driver signing and submission artifacts
+.test-signing/
+dist/
+
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*

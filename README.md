@@ -1,3 +1,29 @@
+# External Touch Virtual Display Driver
+
+This folder contains the official Microsoft IddCx sample fetched from
+`microsoft/Windows-driver-samples` under `video/IndirectDisplay`.
+
+The sample creates a software display device. After installation, Windows
+shows it as a regular extended display. The existing `receiver` executable
+can then capture that display and stream it to the tablet.
+
+## Development flow
+
+1. Install the Windows Driver Kit 10.0.26100.
+2. Run `tools\Build-IddSample.ps1`.
+3. Run `tools\New-TestCertificate.ps1` to create a local development
+   certificate.
+4. Run `tools\Sign-Driver.ps1` against the WDK-generated driver package.
+5. In an elevated PowerShell session, run `tools\Enable-TestSigning.ps1` and
+   restart Windows.
+6. In an elevated PowerShell session, run `tools\Install-TestDriver.ps1`.
+7. Start the built `IddSampleApp.exe` to create the software display device.
+8. In Windows display settings, extend the desktop onto the new display, then
+   start `dist\receiver\ExternalTouchReceiver.exe` with that display index.
+
+The test certificate and test-signing mode are for local development only.
+Production drivers must use Microsoft's hardware driver signing workflow.
+
 # Driver samples for Windows 11
 
 These are the official Microsoft Windows Driver Kit (WDK) driver code samples for Windows 11. They provide a foundation for Universal Windows driver support of all hardware form factors, from phones to desktop PCs. Use these samples with Visual Studio 2022 and Windows Driver Kit (WDK) 11.

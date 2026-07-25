@@ -26,12 +26,52 @@ using namespace Microsoft::WRL;
 
 static constexpr DWORD IDD_SAMPLE_MONITOR_COUNT = 3; // If monitor count > ARRAYSIZE(s_SampleMonitors), we create edid-less monitors
 
+#define EXTERNAL_TOUCH_DISPLAY_MODES \
+    { 3840, 2160, 60 }, \
+    { 3440, 1440, 60 }, \
+    { 3200, 1800, 60 }, \
+    { 3000, 2000, 60 }, \
+    { 2880, 1800, 60 }, \
+    { 2732, 2048, 60 }, \
+    { 2560, 1600, 60 }, \
+    { 2560, 1440, 60 }, \
+    { 2560, 1080, 60 }, \
+    { 2400, 1600, 60 }, \
+    { 2160, 1620, 60 }, \
+    { 2048, 1536, 60 }, \
+    { 2048, 1152, 60 }, \
+    { 1920, 1440, 60 }, \
+    { 1920, 1280, 60 }, \
+    { 1920, 1200, 60 }, \
+    { 1920, 1080, 60 }, \
+    { 1600, 2560, 60 }, \
+    { 1600, 1200, 60 }, \
+    { 1600,  900, 60 }, \
+    { 1440, 2560, 60 }, \
+    { 1440, 1600, 60 }, \
+    { 1440, 1080, 60 }, \
+    { 1280, 1920, 60 }, \
+    { 1280, 1024, 60 }, \
+    { 1280,  800, 60 }, \
+    { 1280,  720, 60 }, \
+    { 1200, 1920, 60 }, \
+    { 1200,  800, 60 }, \
+    { 1080, 2400, 60 }, \
+    { 1080, 2160, 60 }, \
+    { 1080, 1920, 60 }, \
+    { 1024, 1280, 60 }, \
+    { 1024,  768, 60 }, \
+    {  800, 1280, 60 }, \
+    {  800,  600, 60 }, \
+    {  768, 1024, 60 }, \
+    {  720, 1600, 60 }, \
+    {  720, 1280, 60 }, \
+    {  640,  480, 60 }
+
 // Default modes reported for edid-less monitors. The first mode is set as preferred
 static const struct IndirectSampleMonitor::SampleMonitorMode s_SampleDefaultModes[] = 
 {
-    { 1920, 1080, 60 },
-    { 1600,  900, 60 },
-    { 1024,  768, 75 },
+    EXTERNAL_TOUCH_DISPLAY_MODES,
 };
 
 // FOR SAMPLE PURPOSES ONLY, Static info about monitors that will be reported to OS
@@ -49,9 +89,7 @@ static const struct IndirectSampleMonitor s_SampleMonitors[] =
             0x9B,0xFA,0xFA,0x40,0x01,0x0A,0x20,0x20,0x20,0x20,0x20,0x20,0x00,0x2C
         },
         {
-            { 2560, 1440, 144 },
-            { 1920, 1080,  60 },
-            { 1024,  768,  60 },
+            EXTERNAL_TOUCH_DISPLAY_MODES,
         },
         0
     },
@@ -67,9 +105,7 @@ static const struct IndirectSampleMonitor s_SampleMonitors[] =
             0x45,0x4E,0x20,0x59,0x32,0x37,0x66,0x41,0x0A,0x20,0x20,0x20,0x00,0x11
         },
         {
-            { 3840, 2160,  60 },
-            { 1600,  900,  60 },
-            { 1024,  768,  60 },
+            EXTERNAL_TOUCH_DISPLAY_MODES,
         },
         0
     }
@@ -769,16 +805,11 @@ NTSTATUS IddSampleMonitorQueryModes(IDDCX_MONITOR MonitorObject, const IDARG_IN_
     // monitor's descriptor and instead are based on the static processing capability of the device. The OS will
     // report the available set of modes for a given output as the intersection of monitor modes with target modes.
 
-    TargetModes.push_back(CreateIddCxTargetMode(3840, 2160, 60));
-    TargetModes.push_back(CreateIddCxTargetMode(2560, 1440, 144));
-    TargetModes.push_back(CreateIddCxTargetMode(2560, 1440, 90));
-    TargetModes.push_back(CreateIddCxTargetMode(2560, 1440, 60));
-    TargetModes.push_back(CreateIddCxTargetMode(1920, 1080, 144));
-    TargetModes.push_back(CreateIddCxTargetMode(1920, 1080, 90));
-    TargetModes.push_back(CreateIddCxTargetMode(1920, 1080, 60));
-    TargetModes.push_back(CreateIddCxTargetMode(1600,  900, 60));
-    TargetModes.push_back(CreateIddCxTargetMode(1024,  768, 75));
-    TargetModes.push_back(CreateIddCxTargetMode(1024,  768, 60));
+    TargetModes.reserve(ARRAYSIZE(s_SampleDefaultModes));
+    for (const auto& mode : s_SampleDefaultModes)
+    {
+        TargetModes.push_back(CreateIddCxTargetMode(mode.Width, mode.Height, mode.VSync));
+    }
 
     pOutArgs->TargetModeBufferOutputCount = (UINT) TargetModes.size();
 
